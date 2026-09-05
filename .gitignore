@@ -1,0 +1,22 @@
+# Python
+backend/.venv/
+backend/portal.db
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/

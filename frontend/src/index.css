@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --color-matrix: #00ffcc;
+  --color-matrix-muted: #00c9a1;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #020617;
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: #00ffcc55;
+  color: #022c22;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+.ops-grid {
+  background-image:
+    linear-gradient(rgba(0, 255, 204, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 204, 0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.ops-scanlines {
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.12) 0,
+    rgb(0 0 0 / 0.12) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.ops-glow {
+  box-shadow:
+    0 0 0 1px rgb(0 255 204 / 0.12),
+    0 0 24px rgb(0 255 204 / 0.06);
+}
