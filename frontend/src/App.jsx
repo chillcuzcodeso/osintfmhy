@@ -5,6 +5,8 @@ import StatusBar from "./components/StatusBar.jsx";
 import IntelligenceDatabase from "./modules/IntelligenceDatabase.jsx";
 import ActiveOsintTools from "./modules/ActiveOsintTools.jsx";
 import TargetScanner from "./modules/TargetScanner.jsx";
+import GamingScanner from "./modules/GamingScanner.jsx";
+import ScamBrief from "./modules/ScamBrief.jsx";
 import TerminalDock from "./modules/TerminalDock.jsx";
 import { fetchScrapeStatus, fetchTools, triggerScrape } from "./lib/api.js";
 
@@ -125,6 +127,10 @@ export default function App() {
             <ActiveOsintTools query={query} />
           ) : module === "scanner" ? (
             <TargetScanner seed={query} />
+          ) : module === "gaming" ? (
+            <GamingScanner seed={query} />
+          ) : module === "scam" ? (
+            <ScamBrief />
           ) : (
             <TerminalDock seed={query} />
           )}

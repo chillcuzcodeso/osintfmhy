@@ -19,12 +19,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from database import catalog_stats, get_connection, init_db
+from gaming_osint import normalize_gamer_tag, scan_gamer
 from osint_scanner import (
     iter_username_scan,
     normalize_handle,
     platform_catalog,
     scan_username,
 )
+from scam_brief import build_scam_brief
 from scraper import ingest_wiki
 from terminal_diag import run_diagnostic
 
@@ -378,6 +380,26 @@ async def terminal_run(body: TerminalRunRequest):
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     return result
+
+
+@app.get("/api/gaming/lookup")
+async def gaming_lookup(
+    handle: str = Query(..., min_length=2, max_length=32, description="Gamertag or username"),
+):
+    try:
+        tag = normalize_gamer_tag(handle)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return await scan_gamer(tag)
+
+
+class ScamBriefRequest(BaseModel):
+    text: str = Field(..., min_length=4, max_length=8000)
+
+
+@app.post("/api/scam/brief")
+async def scam_brief(body: ScamBriefRequest):
+    return await build_scam_brief(body.text)
 
 
 @app.get("/api/scrape-update")

@@ -63,6 +63,19 @@ export function runTerminalCommand(target, command) {
   }).then(readJson);
 }
 
+export function lookupGamer(handle) {
+  const params = new URLSearchParams({ handle });
+  return fetch(apiUrl(`/api/gaming/lookup?${params}`)).then(readJson);
+}
+
+export function analyzeScam(text) {
+  return fetch(apiUrl("/api/scam/brief"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  }).then(readJson);
+}
+
 export function fetchScrapeStatus() {
   return fetch(apiUrl("/api/scrape-update")).then(readJson);
 }

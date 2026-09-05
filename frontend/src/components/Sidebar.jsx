@@ -1,9 +1,11 @@
-import { Database, Crosshair, Radar, TerminalSquare, Shield } from "lucide-react";
+import { Database, Crosshair, Gamepad2, Radar, Shield, ShieldAlert, TerminalSquare } from "lucide-react";
 
 const MODULES = [
   { id: "database", label: "Intelligence Database", hint: "FMHY", icon: Database },
   { id: "osint", label: "Active OSINT Tools", hint: "LIVE", icon: Crosshair },
   { id: "scanner", label: "Target Scanner", hint: "UID", icon: Radar },
+  { id: "gaming", label: "Gaming Scanner", hint: "TAG", icon: Gamepad2 },
+  { id: "scam", label: "Scam Brief", hint: "LURE", icon: ShieldAlert },
   { id: "terminal", label: "Terminal Dock", hint: "SH", icon: TerminalSquare },
 ];
 
