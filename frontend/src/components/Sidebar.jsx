@@ -1,4 +1,17 @@
-import { Database, Crosshair, Gamepad2, Radar, Shield, ShieldAlert, TerminalSquare } from "lucide-react";
+import {
+  Database,
+  Crosshair,
+  FileSearch,
+  Gamepad2,
+  Globe,
+  Hash,
+  Phone,
+  Radar,
+  Shield,
+  ShieldAlert,
+  TerminalSquare,
+  Wallet,
+} from "lucide-react";
 
 const MODULES = [
   { id: "database", label: "Intelligence Database", hint: "FMHY", icon: Database },
@@ -6,6 +19,11 @@ const MODULES = [
   { id: "scanner", label: "Target Scanner", hint: "UID", icon: Radar },
   { id: "gaming", label: "Gaming Scanner", hint: "TAG", icon: Gamepad2 },
   { id: "scam", label: "Scam Brief", hint: "LURE", icon: ShieldAlert },
+  { id: "ip", label: "IP Lookup", hint: "GEO", icon: Globe },
+  { id: "phone", label: "Phone Card", hint: "TEL", icon: Phone },
+  { id: "discord", label: "Discord / Snowflake", hint: "SNOW", icon: Hash },
+  { id: "wallet", label: "Wallet Card", hint: "CHAIN", icon: Wallet },
+  { id: "exif", label: "File Meta", hint: "EXIF", icon: FileSearch },
   { id: "terminal", label: "Terminal Dock", hint: "SH", icon: TerminalSquare },
 ];
 

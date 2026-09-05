@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Query
+from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -25,6 +25,14 @@ from osint_scanner import (
     normalize_handle,
     platform_catalog,
     scan_username,
+)
+from lookup_intel import (
+    MAX_UPLOAD_BYTES,
+    inspect_file_meta,
+    lookup_discord,
+    lookup_ip,
+    lookup_phone,
+    lookup_wallet,
 )
 from scam_brief import build_scam_brief
 from scraper import ingest_wiki
@@ -400,6 +408,54 @@ class ScamBriefRequest(BaseModel):
 @app.post("/api/scam/brief")
 async def scam_brief(body: ScamBriefRequest):
     return await build_scam_brief(body.text)
+
+
+@app.get("/api/lookup/ip")
+async def api_lookup_ip(q: str = Query(..., min_length=1, max_length=253)):
+    try:
+        return await lookup_ip(q)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/lookup/phone")
+async def api_lookup_phone(q: str = Query(..., min_length=3, max_length=32)):
+    try:
+        return await asyncio.to_thread(lookup_phone, q)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/lookup/discord")
+async def api_lookup_discord(q: str = Query(..., min_length=2, max_length=200)):
+    try:
+        return await lookup_discord(q)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/lookup/wallet")
+async def api_lookup_wallet(q: str = Query(..., min_length=8, max_length=128)):
+    try:
+        return await lookup_wallet(q)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/api/lookup/exif")
+async def api_lookup_exif(file: UploadFile = File(...)):
+    data = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="File too large (8 MB max)")
+    try:
+        return await asyncio.to_thread(
+            inspect_file_meta,
+            data,
+            file.filename or "upload",
+            file.content_type,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.get("/api/scrape-update")

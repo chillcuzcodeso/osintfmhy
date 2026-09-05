@@ -3,3 +3,7 @@ uvicorn[standard]
 requests
 beautifulsoup4
 aiohttp
+phonenumbers
+pillow
+pypdf
+python-multipart

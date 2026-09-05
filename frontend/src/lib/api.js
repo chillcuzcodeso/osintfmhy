@@ -76,6 +76,33 @@ export function analyzeScam(text) {
   }).then(readJson);
 }
 
+function lookupQuery(path, q) {
+  const params = new URLSearchParams({ q });
+  return fetch(apiUrl(`${path}?${params}`)).then(readJson);
+}
+
+export function lookupIp(q) {
+  return lookupQuery("/api/lookup/ip", q);
+}
+
+export function lookupPhone(q) {
+  return lookupQuery("/api/lookup/phone", q);
+}
+
+export function lookupDiscord(q) {
+  return lookupQuery("/api/lookup/discord", q);
+}
+
+export function lookupWallet(q) {
+  return lookupQuery("/api/lookup/wallet", q);
+}
+
+export function lookupExif(file) {
+  const body = new FormData();
+  body.append("file", file);
+  return fetch(apiUrl("/api/lookup/exif"), { method: "POST", body }).then(readJson);
+}
+
 export function fetchScrapeStatus() {
   return fetch(apiUrl("/api/scrape-update")).then(readJson);
 }

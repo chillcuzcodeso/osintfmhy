@@ -7,6 +7,11 @@ import ActiveOsintTools from "./modules/ActiveOsintTools.jsx";
 import TargetScanner from "./modules/TargetScanner.jsx";
 import GamingScanner from "./modules/GamingScanner.jsx";
 import ScamBrief from "./modules/ScamBrief.jsx";
+import IpLookup from "./modules/IpLookup.jsx";
+import PhoneCard from "./modules/PhoneCard.jsx";
+import DiscordLookup from "./modules/DiscordLookup.jsx";
+import WalletCard from "./modules/WalletCard.jsx";
+import FileMeta from "./modules/FileMeta.jsx";
 import TerminalDock from "./modules/TerminalDock.jsx";
 import { fetchScrapeStatus, fetchTools, triggerScrape } from "./lib/api.js";
 
@@ -131,6 +136,16 @@ export default function App() {
             <GamingScanner seed={query} />
           ) : module === "scam" ? (
             <ScamBrief />
+          ) : module === "ip" ? (
+            <IpLookup seed={query} />
+          ) : module === "phone" ? (
+            <PhoneCard seed={query} />
+          ) : module === "discord" ? (
+            <DiscordLookup seed={query} />
+          ) : module === "wallet" ? (
+            <WalletCard seed={query} />
+          ) : module === "exif" ? (
+            <FileMeta />
           ) : (
             <TerminalDock seed={query} />
           )}
