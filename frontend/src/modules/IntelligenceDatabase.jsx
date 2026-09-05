@@ -213,15 +213,38 @@ export default function IntelligenceDatabase({
             <p className="text-[12px] font-mono text-rose-400">Uplink issue: {catalogError}</p>
           )}
 
-          {!q && (
+          {!q && (catalog.count || 0) === 0 && (
+            <div className="h-full min-h-48 grid place-items-center text-center px-6">
+              <div className="max-w-md">
+                <DatabaseBackup className="h-6 w-6 text-matrix mx-auto mb-3" />
+                <p className="text-sm text-zinc-200">FMHY wiki is not on this server yet</p>
+                <p className="mt-1 text-[12px] text-zinc-500">
+                  Search looks through a local copy of the FreeMediaHeckYeah lists. Render starts
+                  empty — click <span className="text-matrix">INGEST</span> once and wait 1–3
+                  minutes. Then search for things like <span className="font-mono">ublock</span> or{" "}
+                  <span className="font-mono">vpn</span>.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onScrape(false)}
+                  disabled={scraping}
+                  className="mt-4 h-8 px-3 rounded-md bg-matrix text-slate-950 text-[11px] font-mono uppercase tracking-wider inline-flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {scraping ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <DatabaseBackup className="h-3.5 w-3.5" />}
+                  {scraping ? "Downloading wiki…" : "Ingest FMHY now"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!q && (catalog.count || 0) > 0 && (
             <div className="h-full min-h-48 grid place-items-center text-center px-6">
               <div>
                 <Search className="h-6 w-6 text-matrix mx-auto mb-3" />
-                <p className="text-sm text-zinc-200">Query the intelligence database</p>
+                <p className="text-sm text-zinc-200">Search the FMHY catalog</p>
                 <p className="mt-1 text-[12px] text-zinc-500 max-w-md">
-                  Type in the global search bar. Matches stream from{" "}
-                  <span className="font-mono text-matrix/80">/api/search</span> and group under
-                  parsed markdown headers.
+                  Type in the bar at the top. Try <span className="font-mono">ublock</span>,{" "}
+                  <span className="font-mono">youtube</span>, or <span className="font-mono">vpn</span>.
                 </p>
                 <p className="mt-3 text-[10px] font-mono text-zinc-600">
                   {(catalog.count || 0).toLocaleString()} indexed tools
@@ -243,7 +266,15 @@ export default function IntelligenceDatabase({
           )}
 
           {q && !loading && !error && groups.length === 0 && (
-            <p className="text-[12px] font-mono text-zinc-500">No tools matched “{q}”.</p>
+            <div className="text-[12px] text-zinc-500 space-y-2">
+              <p className="font-mono">No tools matched “{q}”.</p>
+              {(catalog.count || 0) === 0 && (
+                <p>
+                  The catalog is empty. Click <span className="text-matrix">INGEST</span> first,
+                  wait until the sidebar tool count is above 0, then search again.
+                </p>
+              )}
+            </div>
           )}
 
           {q &&

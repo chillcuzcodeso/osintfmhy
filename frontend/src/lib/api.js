@@ -63,6 +63,10 @@ export function runTerminalCommand(target, command) {
   }).then(readJson);
 }
 
+export function fetchScrapeStatus() {
+  return fetch(apiUrl("/api/scrape-update")).then(readJson);
+}
+
 export function triggerScrape(fresh = false) {
   const qs = fresh ? "?fresh=true" : "";
   return fetch(apiUrl(`/api/scrape-update${qs}`), { method: "POST" }).then(async (res) => {

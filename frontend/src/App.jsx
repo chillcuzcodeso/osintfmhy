@@ -6,7 +6,7 @@ import IntelligenceDatabase from "./modules/IntelligenceDatabase.jsx";
 import ActiveOsintTools from "./modules/ActiveOsintTools.jsx";
 import TargetScanner from "./modules/TargetScanner.jsx";
 import TerminalDock from "./modules/TerminalDock.jsx";
-import { fetchTools, triggerScrape } from "./lib/api.js";
+import { fetchScrapeStatus, fetchTools, triggerScrape } from "./lib/api.js";
 
 const EMPTY_CATALOG = { count: 0, category_count: 0, categories: [] };
 
@@ -35,6 +35,12 @@ export default function App() {
 
   useEffect(() => {
     loadCatalog();
+    fetchScrapeStatus()
+      .then((status) => {
+        if (status.running) setScrape({ running: true });
+        if (status.error) setCatalogError(status.error);
+      })
+      .catch(() => {});
   }, [loadCatalog]);
 
   useEffect(() => {
@@ -64,7 +70,16 @@ export default function App() {
     try {
       setScrape({ running: true });
       await triggerScrape(fresh);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const deadline = Date.now() + 180000;
+      while (Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const status = await fetchScrapeStatus();
+        setScrape({ running: Boolean(status.running), error: status.error });
+        if (!status.running) {
+          if (status.error) setCatalogError(status.error);
+          break;
+        }
+      }
       await loadCatalog();
     } catch (err) {
       setCatalogError(err.message);

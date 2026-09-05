@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from database import get_connection, init_db
+from database import catalog_stats, get_connection, init_db
 from osint_scanner import (
     iter_username_scan,
     normalize_handle,
@@ -41,9 +41,26 @@ _scrape_state: dict[str, Any] = {
 }
 
 
+def _maybe_startup_ingest() -> None:
+    init_db()
+    with get_connection() as conn:
+        if catalog_stats(conn)["tools"] > 0:
+            return
+    with _scrape_lock:
+        if _scrape_state["running"]:
+            return
+        _scrape_state["running"] = True
+        _scrape_state["started_at"] = _utc_now()
+        _scrape_state["finished_at"] = None
+        _scrape_state["error"] = None
+        _scrape_state["result"] = None
+    _run_scrape(False)
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_db()
+    threading.Thread(target=_maybe_startup_ingest, daemon=True, name="fmhy-ingest").start()
     yield
 
 
@@ -361,6 +378,14 @@ async def terminal_run(body: TerminalRunRequest):
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     return result
+
+
+@app.get("/api/scrape-update")
+async def scrape_status():
+    init_db()
+    with get_connection() as conn:
+        stats = catalog_stats(conn)
+    return {**_snapshot_scrape_state(), **stats}
 
 
 @app.post("/api/scrape-update", status_code=202)
